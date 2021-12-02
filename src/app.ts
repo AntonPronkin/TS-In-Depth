@@ -23,8 +23,8 @@ type Book = {
     category: Category;
 };
 
-function getAllBooks(): Book[] {
-    const books: Book[] = [
+function getAllBooks(): readonly Book[] {
+    const books: readonly Book[] = <const>[
         {
             id: 1,
             title: 'Refactoring JavaScript',
@@ -89,7 +89,7 @@ const titles = getBookTitlesByCategory(Category.JavaScript);
 logBookTitles(titles);
 
 function getBookAuthorByIndex(index: number): [title: string, author: string] {
-    const books = getAllBooks() as Array<Book>;
+    const books = getAllBooks();
     if (!Object.prototype.hasOwnProperty.call(books, index)) {
         throw new Error(`Index ${index} is out of range.`);
     }
@@ -107,7 +107,7 @@ type Library = {
 };
 
 function getAllLibraries() {
-    const libraries: Library[] = [
+    const libraries: readonly Library[] = <const>[
         { lib: 'libName1', books: 1_000_000_000, avgPagesPerBook: 250 },
         { lib: 'libName2', books: 5_000_000_000, avgPagesPerBook: 300 },
         { lib: 'libName3', books: 3_000_000_000, avgPagesPerBook: 280 }
