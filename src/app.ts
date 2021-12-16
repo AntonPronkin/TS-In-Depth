@@ -1,3 +1,5 @@
+/* eslint-disable no-redeclare */
+
 showHello('greeting', 'TypeScript');
 
 function showHello(divName: string, name: string) {
@@ -58,7 +60,7 @@ function getAllBooks(): readonly Book[] {
     return books;
 }
 
-function logFirstAvailable(books: readonly Book[]): void {
+function logFirstAvailable(books: readonly Book[] = getAllBooks()): void {
     console.log(`Number of books: ${books.length}`);
 
     const firstAvailableBook = books.find(book => book.available);
@@ -71,7 +73,7 @@ function logFirstAvailable(books: readonly Book[]): void {
 
 logFirstAvailable(getAllBooks());
 
-function getBookTitlesByCategory(category: Category): Array<string> {
+function getBookTitlesByCategory(category: Category = Category.JavaScript): Array<string> {
     return getAllBooks()
         .filter(book => book.category === category)
         .map(book => book.title);
@@ -85,7 +87,7 @@ function logBookTitles(titles: readonly string[]): void {
     }
 }
 
-const titles = getBookTitlesByCategory(Category.JavaScript);
+const titles = getBookTitlesByCategory();
 logBookTitles(titles);
 
 function getBookAuthorByIndex(index: number): [title: string, author: string] {
@@ -125,3 +127,113 @@ function calcTotalPages(libraries: readonly Library[]) {
 function getPages(library: Library): bigint {
     return BigInt(library.books) * BigInt(library.avgPagesPerBook);
 }
+
+function getBookByID(id: number): Book {
+    return getAllBooks().find(book => book.id === id);
+}
+
+getBookByID(1);
+
+
+// === Function Type ===
+
+function createCustomerID(name: string, id: number): string {
+    return `${name}-${id}`;
+}
+
+const myID: string = createCustomerID('Ann', 10);
+console.log(myID);
+
+let idGenerator: (name: string, id: number) => string;
+
+// Другие варианты задания фуникцонального типа:
+
+// type IdGenerator = (name: string, id: number) => string;
+// let idGenerator: IdGenerator;
+
+// let idGenerator: typeof createCustomerID;
+
+idGenerator = (name: string, id: number) => `${name}-${id}`;
+idGenerator = createCustomerID;
+
+const myNewId = idGenerator('Jack', 25);
+console.log(myNewId);
+
+function createCustomer(name: string, age?: number, city?: string) {
+    console.log(`Name - ${name}`);
+
+    if (age) {
+        console.log(`Age - ${age}`);
+    }
+
+    if (city) {
+        console.log(`City - ${city}`);
+    }
+}
+
+createCustomer('Anton');
+createCustomer('Anton', 24);
+createCustomer('Anton', 24, 'Ryazan');
+
+function checkoutBooks(customer: string, ...bookIDs: number[]) {
+    console.log(`Customer - ${customer}`);
+
+    return bookIDs
+        .map(bookID => getBookByID(bookID))
+        .filter(book => book.available)
+        .map(book => book.title);
+}
+
+const myBooks = checkoutBooks('Ann', 1, 2, 4);
+// const myBooks = checkoutBooks('Ann', ...[1, 2, 4]);
+
+console.log(myBooks);
+
+function getTitles(author: string): string[];
+function getTitles(available: boolean): string[];
+function getTitles(id: number, available: boolean): string[];
+function getTitles(...params: unknown[]): string[] {
+    const predicate = getPredicateByParams(params);
+    return getAllBooks()
+        .filter(predicate)
+        .map(book => book.title);
+}
+
+function getPredicateByParams(params: unknown[]): (book: Book) => boolean {
+    if (typeof params[0] === 'string') {
+        return book => book.author === params[0];
+    }
+
+    if (typeof params[0] === 'boolean') {
+        return book => book.available === params[0];
+    }
+
+    return book => book.id === params[0] && book.available === params[1];
+}
+
+const checkedOutBooks = getTitles(false);
+console.log(checkedOutBooks);
+
+function func(title: any) {
+    if (typeof title !== 'string') {
+        throw new TypeError('qw');
+    }
+
+    title.toLowerCase();
+}
+
+
+function assertStringValue(value: any): asserts value is string {
+    if (typeof value !== 'string') {
+        throw new TypeError('Value should have been a string');
+    }
+}
+
+function bookTitleTransform(title: any): string | never {
+    assertStringValue(title);
+
+    return [...title].reverse().join();
+}
+
+bookTitleTransform('Hello');
+bookTitleTransform(123);
