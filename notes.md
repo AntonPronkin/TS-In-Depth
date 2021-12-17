@@ -240,3 +240,82 @@ declare enum SomeEnum {
     value2
 }
 ```
+
+## Лекция 3 - Interfaces
+
+### Defining an Interface
+Возможно, имеет смысл дополнить, что интерфейс может определять не только свойства, но и методы, например
+
+```ts
+interface Book {
+    id: number;
+    title: string;
+    author: string;
+    pages?: number;                           // Optional Field
+    markDamaged: (reason: string) => void;    // Function Types (Property)
+    restore(reason: string): void;            // Function Types (Method)
+    readonly pubDate: string;                 // Readonly Field
+    [propName: string]: any;                  // Some extra properties
+};
+```
+
+### Extending interfaces
+Можно упомянуть, что повторное объявление интерфейса добавляет свойства (с альясами так нельзя):
+
+```ts
+interface User {
+    name: string;
+}
+
+interface User {
+    email: string;
+}
+
+const user: User = {
+    name: 'User name',
+    email: 'user@email.com'
+};
+```
+
+### Optional Chaining
+Можно рассказать, это можно удобно использовать в условиях, например:
+
+```ts
+function printAuthors(book: Book): void {
+    if (book?.authors?.length) {
+        book.authors.forEach(elem => console.log(elem));
+    } else {
+        console.log('There are no authors');
+    }
+}
+
+// вместо
+
+function printAuthors(book: Book): void {
+    if (book && book.authors && book.authors.length) {
+        book.authors.forEach(elem => console.log(elem));
+    } else {
+        console.log('There are no authors');
+    }
+}
+```
+
+Так же можно рассказать про Nullish Coalescing (объединение с null), так как их удобно использовать вместе:
+
+```ts
+const title = offer.book?.getTitle?.() ?? 'Default title';
+```
+
+### Keyof operator
+
+Можно добавить какое-нибудь задание для того, чтобы сделать проекцию на какое-то свойство, например:
+```ts
+function getBookInfo(property: BookProperties): any[] {
+    return getAllBooks().map(book => book[property]);
+}
+
+const titles: string[] = getBookInfo('title');
+const ids: int[] = getBookInfo('id');
+```
+
+
