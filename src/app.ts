@@ -17,12 +17,18 @@ enum Category {
     Angular
 }
 
-type Book = {
+interface DamageLogger {
+    (reason: string): void;
+}
+
+interface Book {
     id: number;
     title: string;
     author: string;
     available: boolean;
     category: Category;
+    pages?: number;
+    markDamaged?: DamageLogger;
 };
 
 function getAllBooks(): readonly Book[] {
@@ -134,6 +140,9 @@ function getBookByID(id: number): Book {
 
 getBookByID(1);
 
+function printBook(book: Book) {
+    console.log(`${book.title} by ${book.author}`);
+}
 
 // === Function Type ===
 
@@ -147,6 +156,11 @@ console.log(myID);
 let idGenerator: (name: string, id: number) => string;
 
 // Другие варианты задания фуникцонального типа:
+
+// interface IdGenerator {
+//     (name: string, id: number): string;
+// }
+// let idGenerator: IdGenerator;
 
 // type IdGenerator = (name: string, id: number) => string;
 // let idGenerator: IdGenerator;
@@ -237,3 +251,74 @@ function bookTitleTransform(title: any): string | never {
 
 bookTitleTransform('Hello');
 bookTitleTransform(123);
+
+// === Interfaces ===
+
+const myBook: Book = {
+    id: 5,
+    title: 'Colors, Backgrounds, and Gradients',
+    author: 'Eric A. Meyer',
+    available: true,
+    category: Category.CSS,
+    pages: 200,
+    markDamaged: reason => `Damaged: ${reason}`
+};
+
+printBook(myBook);
+myBook.markDamaged('missing back cover');
+
+const logDamage: DamageLogger = reason => `Damaged: ${reason}`;
+logDamage('Book was burned');
+
+interface Person {
+    name: string;
+    email: string;
+}
+
+interface Author extends Person {
+    numBooksPublished: number;
+}
+
+interface Librarian extends Person {
+    department: string;
+    assistCustomer(customerName: string): void;
+}
+
+const favoriteAuthor: Author = {
+    name: 'Anton',
+    email: 'anton@test.com',
+    numBooksPublished: 4
+};
+
+const favoriteLibrarian: Librarian = {
+    name: 'Jack',
+    email: 'jack@test.com',
+    department: 'The Best Department',
+    assistCustomer: customerName => console.log(`Librarian assisted to ${customerName}`)
+};
+
+const offer: any = {
+    book: {
+        title: 'Essential TypeScript',
+    },
+};
+
+console.log(offer.magazine);
+console.log(offer.magazine?.getTitle?.());
+console.log(offer.book?.getTitle?.());
+console.log(offer.book?.authors?.[0]);
+
+type BookProperties = keyof Book;
+
+function getProperty(book: Book, property: BookProperties): any {
+    const propertyValue = book[property];
+    if (typeof property === 'function') {
+        return (propertyValue as Function).name;
+    }
+
+    return propertyValue;
+}
+
+getProperty(myBook, 'title');
+getProperty(myBook, 'markDamaged');
+// getProperty(myBook, 'isbn');
