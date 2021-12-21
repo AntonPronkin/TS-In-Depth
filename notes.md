@@ -241,6 +241,22 @@ declare enum SomeEnum {
 }
 ```
 
+
+## Лекция 2 - Functions
+
+### Overloaded functions
+
+Можно добавить, что перегружаемые фуникции могут иметь разные типы возвращаемых значений, например
+
+```ts
+function sum(a: number, b: number): number;
+function sum(a: string, b: string): string;
+function sum(a: any, b: any): number | string {
+    return a + b;
+}
+```
+
+
 ## Лекция 3 - Interfaces
 
 ### Defining an Interface
@@ -306,6 +322,8 @@ function printAuthors(book: Book): void {
 const title = offer.book?.getTitle?.() ?? 'Default title';
 ```
 
+UPD: Это было показано в 4 лекции. Здесь можно просто показать, но не останавливаться на этом.
+
 ### Keyof operator
 
 Можно добавить какое-нибудь задание для того, чтобы сделать проекцию на какое-то свойство, например:
@@ -319,3 +337,79 @@ const ids: int[] = getBookInfo('id');
 ```
 
 
+## Лекция 4 - Classes
+
+## Constructors
+
+Было сказано, что конструктор может быть только один. Можно добавить, что мы можем перегружать конструктор, как и методы, чтобы иметь возможность определить "несколько" конструкторов:
+
+```ts
+class User {
+    private constructor();
+    private constructor(name: string);
+    private constructor(age: number);
+    private constructor(name: string, age: number);
+    private constructor(...values: any[]) {
+    }
+}
+```
+
+### Pretected Constructor
+
+Было сказано, что если конструктор имеет модификатор доступа pretected, то нельзя создавать экземпляры этого класса. Можно сделать пометку, что создавать экземпляры можно, но изнутри класса (даже если конструктор имеет модификатор private).
+
+```ts
+class Singleton {
+    #instance: Singleton;
+
+    private constructor() {
+    }
+
+    public get instance() {
+        if (!this.#instance) {
+            this.#instance = new Singleton();
+        }
+
+        return this.#instance;
+    }
+}
+```
+
+### Abstract Classes
+
+Можно так же сказать, что если наследник не хочет реализовывать абстрактные методы, то он тоже должен быть помечен как абстрактный, причем он может реализовать некоторые абстрактные методы, а так же добавить новые абстрактные методы.
+
+
+### Interfaces for Class Types
+
+Можно сказать, что интерфейсы не просто ограничивают доступные свойства/методы. Это ограничение дает нам "свободу". Мы можем не привязываться к конкретным классам и использовать лишь их интерфейсы. То есть мы можем сделать следующее, с учетом того, что `Cat` и `Airplane` не имеют каких-то общих предков:
+
+```ts
+interface Movable {
+    move();
+}
+
+class Cat implements Movable {
+    move() {
+        console.log('Cat runs');
+    }
+}
+
+class Airplane implements Movable {
+    move() {
+        console.log('Airplane flies');
+    }
+}
+
+const cat = new Cat();
+const airplane = new Airplane();
+
+moveObject(cat);
+moveObject(airplane);
+
+function moveObject(movableObject: Movable) {
+    movableObject.move(); // Не важно, коты или самолеты, главное, что они могут двигаться
+}
+```
+
+На самом деле, это можно было проделать, даже если мы не напишем явно `implements Movable`, однако так мы явно даем знать, что класс обязан реализовать необходимые методы интерфейса.
