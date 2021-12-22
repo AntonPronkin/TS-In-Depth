@@ -413,3 +413,64 @@ function moveObject(movableObject: Movable) {
 ```
 
 На самом деле, это можно было проделать, даже если мы не напишем явно `implements Movable`, однако так мы явно даем знать, что класс обязан реализовать необходимые методы интерфейса.
+
+
+## Лекция 5 - Modules
+
+Ради интереса, можно посмотреть, во что преобразовываются модули для разных версий ECMAScript. Например, имеем следующий код:
+
+```ts
+function localFunction() {}
+export function exportedFunction() {}
+
+const localConst = 42;
+export const exportedConst = 42;
+
+class LocalClass {}
+export class ExportedClass {}
+
+export default exportedFunction;
+```
+
+Результат `tsc src/example.ts --target ES5`:
+
+```js
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.ExportedClass = exports.exportedConst = exports.exportedFunction = void 0;
+function localFunction() {
+}
+function exportedFunction() {
+}
+exports.exportedFunction = exportedFunction;
+var localConst = 42;
+exports.exportedConst = 42;
+var LocalClass = /** @class */ (function () {
+    function LocalClass() {
+    }
+    return LocalClass;
+}());
+var ExportedClass = /** @class */ (function () {
+    function ExportedClass() {
+    }
+    return ExportedClass;
+}());
+exports.ExportedClass = ExportedClass;
+exports.default = exportedFunction;
+```
+
+Результат `tsc src/example.ts --target ES6`:
+
+```ts
+function localFunction() {
+}
+export function exportedFunction() {
+}
+const localConst = 42;
+export const exportedConst = 42;
+class LocalClass {
+}
+export class ExportedClass {
+}
+export default exportedFunction;
+```
