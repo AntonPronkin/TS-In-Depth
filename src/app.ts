@@ -1,4 +1,6 @@
 import { Library, Shelf } from './classes';
+import Encyclopedia from './classes/encyclopedia';
+import { UniversityLibrarian } from './classes/universityLibrarian';
 import { Category } from './enums';
 import { bookTitleTransform, checkoutBooks, createCustomer, createCustomerID, getAllBooks, getBookAuthorByIndex, getBookByID, getBookTitlesByCategory, getProperty, getTitles, logBookTitles, logFirstAvailable, printBook, printRefBook, purge, showHello } from './functions';
 import { Author, Book, Librarian, Logger, Magazine } from './interfaces';
@@ -230,3 +232,21 @@ const updatedBook: UpdatedBook = {
 
 const parameters: Parameters<CreateCustomerFunctionType> = ['name'];
 createCustomer(...parameters);
+
+const universityLibrarian = new UniversityLibrarian();
+universityLibrarian.name = 'Anna';
+// universityLibrarian['value'] = 42;
+console.log(universityLibrarian);
+
+universityLibrarian['printLibrarian']();
+
+universityLibrarian.assistFaculty = () => console.log('Updated assistFaculty');
+// universityLibrarian.teachCommunity = () => console.log('Updated teachCommunity');
+
+const refBook = new Encyclopedia(2, 'My Encyclopedia', 1997, 2);
+// refBook.printItem();
+
+refBook.copies = 1;
+// refBook.copies = -5.5;
+// refBook.copies = 0;
+// refBook.copies = 5.5;
