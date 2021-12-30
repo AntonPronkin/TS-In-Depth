@@ -1,5 +1,5 @@
 /* eslint-disable no-redeclare */
-import RefBook from './encyclopedia';
+import RefBook from './classes/encyclopedia';
 import { Category } from './enums';
 import { Book } from './interfaces';
 import { BookOrUndefined, BookProperties, Library } from './types';
@@ -174,10 +174,19 @@ export function bookTitleTransform(title: any): string | never {
     return [...title].reverse().join();
 }
 
-export function getProperty(book: Book, property: BookProperties): any {
-    const propertyValue = book[property];
+// export function getProperty(book: Book, property: BookProperties): any {
+//     const propertyValue = book[property];
+//     if (typeof property === 'function') {
+//         return (propertyValue as Function).name;
+//     }
+
+//     return propertyValue;
+// }
+
+export function getProperty<TObject, TKey extends keyof TObject>(object: TObject, property: TKey): TObject[TKey] | string {
+    const propertyValue = object[property];
     if (typeof property === 'function') {
-        return (propertyValue as Function).name;
+        return (propertyValue as unknown as Function).name;
     }
 
     return propertyValue;
@@ -194,3 +203,6 @@ export function printRefBook(data: any): void {
     data.printItem();
 }
 
+export function purge<T>(inventory: T[]): T[] {
+    return inventory.slice(2);
+}
