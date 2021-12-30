@@ -474,3 +474,119 @@ export class ExportedClass {
 }
 export default exportedFunction;
 ```
+
+
+## Лекция 6 - Generics
+
+Думаю, важно отметить, что дженерики доступны только в ts и недоступны в js, поэтому на них накладываются некоторые ограничения. Например, мы не можем сделать вот так:
+
+```ts
+function logType<T>() {
+    console.log(typeof T);
+}
+
+// or
+
+function logType<T>() {
+    if (typeof T === 'number') {
+        console.log('T is number');
+    } else {
+        console.log('T is not number');
+    }
+}
+```
+
+### Generic Functions
+
+На слайде приводится пример
+
+```ts
+let someString1: string = logAndReturn<string>('Log this');
+```
+
+Хороший пример, который можно дополнить другим примером, чтобы показать отличия Generics от Union:
+
+```ts
+function logAndReturn(thing: number | string): number | string {
+    console.log(thing);
+    return thing;
+}
+
+function logAndReturnGeneric<T>(thing: T): T {
+    console.log(thing);
+    return thing;
+}
+
+const someString1 = logAndReturnGeneric<string>('Log this');  // typeof someString1 = string
+const someNumber1 = logAndReturnGeneric<number>(42);          // typeof someString1 = number
+
+const someString: string = logAndReturnGeneric<number>(42);   // Error
+
+const someString2 = logAndReturn('Log this');                 // typeof someString2 = string | number
+const someNumber2 = logAndReturn(42);                         // typeof somenumber2 = string | number
+```
+
+Или же во время практики, когда объясняется, почему `Shelf<T>` предпочтительнее Union. Так как
+```ts
+type ShelfType = string | number;
+
+export default class Shelf {
+    private items: ShelfType[] = [];
+
+    public add(item: ShelfType): void {
+        this.items.push(item);
+    }
+
+    public getFirst(): ShelfType {
+        return this.items[0];
+    }
+}
+
+export default class ShelfGeneric<T>  {
+    private items: T[] = [];
+
+    public add(item: T): void {
+        this.items.push(item);
+    }
+
+    public getFirst(): T {
+        return this.items[0];
+    }
+}
+
+// ...
+
+const shelf = new Shelf();
+shelf.add(43);
+shelf.add('string');                    // ok
+const value = shelf.getFirst();         // typeof value = string | number
+
+
+const shelfNumber = new ShelfGeneric<number>();
+shelfNumber.add(43);
+shelfNumber.add('string');             // error
+const value = shelfNumber.getFirst();  // typeof value = number
+```
+
+### Utilities
+
+Можно сказать, что большинство встроенных утилит представляют собой обычные альясы для типов, которые можно написать самостоятельно. VS Code покажет объявления для существующих утилит, например:
+
+```ts
+type Partial<T> = { [P in keyof T]?: T[P]; }
+type Required<T> = { [P in keyof T]-?: T[P]; }
+type Readonly<T> = { readonly [P in keyof T]: T[P]; }
+type Record<K extends string | number | symbol, T> = { [P in K]: T; }
+type Pick<T, K extends keyof T> = { [P in K]: T[P]; }
+type Omit<T, K extends string | number | symbol> = { [P in Exclude<keyof T, K>]: T[P]; }
+type Exclude<T, U> = T extends U ? never : T
+type Extract<T, U> = T extends U ? T : never
+type NonNullable<T> = T extends null ? never : T
+type Parameters<T extends (...args: any) => any> = T extends (...args: infer P) => any ? P : never
+type ReturnType<T extends (...args: any) => any> = T extends (...args: any) => infer R ? R : any
+```
+
+### Practice
+Task 07.03.
+`1.а.` - можно дополнить, что необходимо возвратить первый найденный элемент на полке `с заданным наименованием`.
+`6.` - можно уточнить, что `getProperty` находится в `functions.ts`, так как не сразу очевидно.
