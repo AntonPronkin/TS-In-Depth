@@ -2,7 +2,7 @@ import { Library, Shelf } from './classes';
 import Encyclopedia from './classes/encyclopedia';
 import { UniversityLibrarian } from './classes/universityLibrarian';
 import { Category } from './enums';
-import { bookTitleTransform, checkoutBooks, createCustomer, createCustomerID, getAllBooks, getBookAuthorByIndex, getBookByID, getBookTitlesByCategory, getProperty, getTitles, logBookTitles, logFirstAvailable, printBook, printRefBook, purge, showHello } from './functions';
+import { bookTitleTransform, checkoutBooks, createCustomer, createCustomerID, getAllBooks, getBookAuthorByIndex, getBookByID, getBooksByCategory, getBooksByCategoryPromise, getBookTitlesByCategory, getProperty, getTitles, logBookTitles, logCategorySearch, logFirstAvailable, logSearchResults, printBook, printRefBook, purge, showHello } from './functions';
 import { Author, Book, Librarian, Logger, Magazine } from './interfaces';
 import { BookRequiredFields, CreateCustomerFunctionType, PersonBook, UpdatedBook } from './types';
 
@@ -250,3 +250,37 @@ refBook.copies = 1;
 // refBook.copies = -5.5;
 // refBook.copies = 0;
 // refBook.copies = 5.5;
+
+
+// === Asynchronous Patterns ===
+
+/*
+console.log('begin');
+getBooksByCategory(Category.JavaScript, logCategorySearch);
+getBooksByCategory(Category.Software, logCategorySearch);
+console.log('end');
+*/
+
+/*
+console.log('begin');
+getBooksByCategoryPromise(Category.JavaScript)
+    .then(titles => titles.length)
+    .then(length => console.log(`Books found: ${length}`))
+    .catch(reason => console.log(reason));
+
+getBooksByCategoryPromise(Category.Software)
+    .then(titles => titles.length)
+    .then(length => console.log(`Books found: ${length}`))
+    .catch(reason => console.log(reason));
+
+console.log('end');
+*/
+
+console.log('begin');
+logSearchResults(Category.JavaScript)
+    .catch(reason => console.log(reason));
+
+logSearchResults(Category.Software)
+    .catch(reason => console.log(reason));
+
+console.log('end');

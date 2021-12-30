@@ -25,7 +25,7 @@ export default abstract class ReferenceItem {
         this.#id = id;
     }
 
-    @timeout(2000)
+    // @timeout(2000)
     public printItem(): void {
         console.log(`${this.title} was published in ${this.year}`);
         console.log(`Department is ${ReferenceItem.department}`);
